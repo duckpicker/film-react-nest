@@ -1,1 +1,5 @@
-//TODO реализовать DTO для /orders
+export class OrderDto {
+  filmId: string;
+  scheduleId: string;
+  seats: string[];
+}
