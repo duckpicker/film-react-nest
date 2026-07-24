@@ -41,10 +41,7 @@ export class OrderService {
 
       taken.push(seatKey);
 
-      await this.scheduleRepository.update(
-        { id: ticket.session },
-        { taken },
-      );
+      await this.scheduleRepository.update({ id: ticket.session }, { taken });
 
       results.push({
         film: ticket.film,
