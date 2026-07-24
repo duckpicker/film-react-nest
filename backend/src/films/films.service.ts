@@ -39,7 +39,7 @@ export class FilmsService {
       daytime: item.daytime,
       day: '',
       time: '',
-      hall: `Зал ${item.hall || '1'}`,
+      hall: item.hall,
       rows: item.rows,
       seats: item.seats,
       price: item.price,

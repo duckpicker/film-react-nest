@@ -14,14 +14,14 @@ export class OrderService {
     for (const ticket of orderDto.tickets) {
       const film = await this.filmModel.findOne({ id: ticket.film }).exec();
       if (!film) {
-        throw new BadRequestException(`Фильм с id ${ticket.film} не найден`);
+        throw new BadRequestException('Фильм не найден');
       }
 
       const scheduleItem = film.schedule.find(
         (s) => s.id === ticket.session,
       );
       if (!scheduleItem) {
-        throw new BadRequestException(`Сеанс с id ${ticket.session} не найден`);
+        throw new BadRequestException('Сеанс не найден');
       }
 
       const seatKey = `${ticket.row}:${ticket.seat}`;
@@ -39,15 +39,10 @@ export class OrderService {
       );
 
       results.push({
-        id: `${ticket.film}-${ticket.session}-${ticket.row}-${ticket.seat}`,
-        film: ticket.film,
-        session: ticket.session,
-        daytime: scheduleItem.daytime,
-        day: ticket.day,
-        time: ticket.time,
+        filmId: ticket.film,
+        scheduleId: ticket.session,
         row: ticket.row,
         seat: ticket.seat,
-        price: ticket.price,
       });
     }
 
