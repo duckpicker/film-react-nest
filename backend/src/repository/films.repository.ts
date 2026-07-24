@@ -19,14 +19,21 @@ export class FilmsRepository {
     return this.filmModel.findOne({ id }).exec();
   }
 
-  async updateTakenSeats(
+  async addTakenSeat(
     filmId: string,
     scheduleId: string,
-    taken: string[],
-  ): Promise<void> {
-    await this.filmModel.updateOne(
-      { id: filmId, 'schedule.id': scheduleId },
-      { $set: { 'schedule.$.taken': taken } },
+    seatKey: string,
+  ): Promise<boolean> {
+    const result = await this.filmModel.updateOne(
+      {
+        id: filmId,
+        'schedule.id': scheduleId,
+        'schedule.taken': { $ne: seatKey },
+      },
+      {
+        $push: { 'schedule.$.taken': seatKey },
+      },
     );
+    return result.modifiedCount > 0;
   }
 }

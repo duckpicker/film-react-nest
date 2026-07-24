@@ -26,19 +26,16 @@ export class OrderService {
       }
 
       const seatKey = `${ticket.row}:${ticket.seat}`;
-      const taken = scheduleItem.taken || [];
 
-      if (taken.includes(seatKey)) {
-        throw new BadRequestException(`Место ${seatKey} уже занято`);
-      }
-
-      const newTaken = [...taken, seatKey];
-
-      await this.filmsRepository.updateTakenSeats(
+      const success = await this.filmsRepository.addTakenSeat(
         ticket.film,
         ticket.session,
-        newTaken,
+        seatKey,
       );
+
+      if (!success) {
+        throw new BadRequestException(`Место ${seatKey} уже занято`);
+      }
 
       results.push({
         id: this.generateId(),
