@@ -10,8 +10,13 @@ export class FilmsController {
     return this.filmsService.findAll();
   }
 
-  @Get(':id/schedule')
+  @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.filmsService.findOne(id);
+  }
+
+  @Get(':id/schedule')
+  async findSchedule(@Param('id') id: string) {
+    return this.filmsService.findSchedule(id);
   }
 }

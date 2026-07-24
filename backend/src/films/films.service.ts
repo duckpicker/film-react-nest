@@ -7,15 +7,48 @@ import { Film, FilmDocument } from '../repository/film.schema';
 export class FilmsService {
   constructor(@InjectModel(Film.name) private filmModel: Model<FilmDocument>) {}
 
-  async findAll(): Promise<Film[]> {
-    return this.filmModel.find().exec();
+  async findAll() {
+    const films = await this.filmModel.find().exec();
+    return {
+      items: films,
+      total: films.length,
+    };
   }
 
-  async findOne(id: string): Promise<Film> {
+  async findOne(id: string) {
     const film = await this.filmModel.findOne({ id }).exec();
     if (!film) {
       throw new NotFoundException('Фильм не найден');
     }
-    return film;
+
+    return {
+      items: [film],
+      total: 1,
+    };
+  }
+
+  async findSchedule(id: string) {
+    const film = await this.filmModel.findOne({ id }).exec();
+    if (!film) {
+      throw new NotFoundException('Фильм не найден');
+    }
+
+    const schedule = film.schedule.map((item) => ({
+      id: item.id,
+      film: id,
+      daytime: item.daytime,
+      day: '',
+      time: '',
+      hall: `Зал ${item.hall || '1'}`,
+      rows: item.rows,
+      seats: item.seats,
+      price: item.price,
+      taken: item.taken || [],
+    }));
+
+    return {
+      items: schedule,
+      total: schedule.length,
+    };
   }
 }

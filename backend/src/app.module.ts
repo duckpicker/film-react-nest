@@ -17,7 +17,6 @@ import { OrderModule } from './order/order.module';
     MongooseModule.forRoot(process.env.DATABASE_URL),
     ServeStaticModule.forRoot({
       rootPath: path.join(__dirname, '..', 'public'),
-      serveRoot: '/content',
     }),
     FilmsModule,
     OrderModule,
