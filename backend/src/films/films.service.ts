@@ -1,14 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Film, FilmDocument } from '../repository/film.schema';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Film } from '../entities/film.entity';
+import { Schedule } from '../entities/schedule.entity';
 
 @Injectable()
 export class FilmsService {
-  constructor(@InjectModel(Film.name) private filmModel: Model<FilmDocument>) {}
+  constructor(
+    @InjectRepository(Film)
+    private filmRepository: Repository<Film>,
+  ) {}
 
   async findAll() {
-    const films = await this.filmModel.find().exec();
+    const films = await this.filmRepository.find();
     return {
       items: films,
       total: films.length,
@@ -16,7 +20,7 @@ export class FilmsService {
   }
 
   async findOne(id: string) {
-    const film = await this.filmModel.findOne({ id }).exec();
+    const film = await this.filmRepository.findOne({ where: { id } });
     if (!film) {
       throw new NotFoundException('Фильм не найден');
     }
@@ -28,7 +32,11 @@ export class FilmsService {
   }
 
   async findSchedule(id: string) {
-    const film = await this.filmModel.findOne({ id }).exec();
+    const film = await this.filmRepository.findOne({
+      where: { id },
+      relations: ['schedule'],
+    });
+
     if (!film) {
       throw new NotFoundException('Фильм не найден');
     }

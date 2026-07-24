@@ -1,25 +1,33 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Film, FilmDocument } from '../repository/film.schema';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Film } from '../entities/film.entity';
+import { Schedule } from '../entities/schedule.entity';
 import { OrderDto } from './dto/order.dto';
 
 @Injectable()
 export class OrderService {
-  constructor(@InjectModel(Film.name) private filmModel: Model<FilmDocument>) {}
+  constructor(
+    @InjectRepository(Film)
+    private filmRepository: Repository<Film>,
+    @InjectRepository(Schedule)
+    private scheduleRepository: Repository<Schedule>,
+  ) {}
 
   async createOrder(orderDto: OrderDto) {
     const results = [];
 
     for (const ticket of orderDto.tickets) {
-      const film = await this.filmModel.findOne({ id: ticket.film }).exec();
+      const film = await this.filmRepository.findOne({
+        where: { id: ticket.film },
+      });
       if (!film) {
         throw new BadRequestException('Фильм не найден');
       }
 
-      const scheduleItem = film.schedule.find(
-        (s) => s.id === ticket.session,
-      );
+      const scheduleItem = await this.scheduleRepository.findOne({
+        where: { id: ticket.session, filmId: ticket.film },
+      });
       if (!scheduleItem) {
         throw new BadRequestException('Сеанс не найден');
       }
@@ -31,11 +39,11 @@ export class OrderService {
         throw new BadRequestException(`Место ${seatKey} уже занято`);
       }
 
-      const newTaken = [...taken, seatKey];
+      taken.push(seatKey);
 
-      await this.filmModel.updateOne(
-        { id: film.id, 'schedule.id': scheduleItem.id },
-        { $set: { 'schedule.$.taken': newTaken } },
+      await this.scheduleRepository.update(
+        { id: ticket.session },
+        { taken },
       );
 
       results.push({
