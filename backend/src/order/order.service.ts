@@ -39,10 +39,12 @@ export class OrderService {
       );
 
       results.push({
-        filmId: ticket.film,
-        scheduleId: ticket.session,
+        film: ticket.film,
+        session: ticket.session,
+        daytime: ticket.daytime || scheduleItem.daytime,
         row: ticket.row,
         seat: ticket.seat,
+        price: ticket.price || scheduleItem.price,
       });
     }
 
