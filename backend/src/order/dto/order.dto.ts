@@ -3,7 +3,7 @@ import {
   IsNumber,
   IsEmail,
   IsArray,
-  ValidateNested,
+  ValidateNested, IsOptional,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -18,9 +18,11 @@ export class TicketDto {
   daytime: string;
 
   @IsString()
+  @IsOptional()
   day: string;
 
   @IsString()
+  @IsOptional()
   time: string;
 
   @IsNumber()
