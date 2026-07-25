@@ -1,22 +1,34 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Film, FilmDocument } from './film.schema';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Film } from '../films/film.entity';
+import { Schedule } from '../films/schedule.entity';
 
 @Injectable()
 export class FilmsRepository {
-  constructor(@InjectModel(Film.name) private filmModel: Model<FilmDocument>) {}
+  constructor(
+    @InjectRepository(Film)
+    private filmRepository: Repository<Film>,
+    @InjectRepository(Schedule)
+    private scheduleRepository: Repository<Schedule>,
+  ) {}
 
-  async findAll(): Promise<FilmDocument[]> {
-    return this.filmModel.find().exec();
+  async findAll(): Promise<Film[]> {
+    return this.filmRepository.find({ relations: ['schedules'] });
   }
 
-  async findById(id: string): Promise<FilmDocument | null> {
-    return this.filmModel.findOne({ id }).exec();
+  async findById(id: string): Promise<Film | null> {
+    return this.filmRepository.findOne({
+      where: { id },
+      relations: ['schedules'],
+    });
   }
 
-  async findOneWithSchedule(id: string): Promise<FilmDocument | null> {
-    return this.filmModel.findOne({ id }).exec();
+  async findOneWithSchedule(id: string): Promise<Film | null> {
+    return this.filmRepository.findOne({
+      where: { id },
+      relations: ['schedules'],
+    });
   }
 
   async addTakenSeat(
@@ -24,16 +36,22 @@ export class FilmsRepository {
     scheduleId: string,
     seatKey: string,
   ): Promise<boolean> {
-    const result = await this.filmModel.updateOne(
-      {
-        id: filmId,
-        'schedule.id': scheduleId,
-        'schedule.taken': { $ne: seatKey },
-      },
-      {
-        $push: { 'schedule.$.taken': seatKey },
-      },
-    );
-    return result.modifiedCount > 0;
+    const schedule = await this.scheduleRepository.findOne({
+      where: { id: scheduleId, film: { id: filmId } },
+    });
+
+    if (!schedule) return false;
+
+    const takenArray = schedule.taken
+      ? schedule.taken.split(',').filter(Boolean)
+      : [];
+
+    if (takenArray.includes(seatKey)) return false;
+
+    takenArray.push(seatKey);
+    schedule.taken = takenArray.join(',');
+
+    await this.scheduleRepository.save(schedule);
+    return true;
   }
 }

@@ -3,7 +3,8 @@ import {
   IsNumber,
   IsEmail,
   IsArray,
-  ValidateNested, IsOptional,
+  ValidateNested,
+  IsOptional,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 

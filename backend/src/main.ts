@@ -14,7 +14,7 @@ async function bootstrap() {
       new ValidationPipe({ whitelist: true, transform: true }),
     );
     console.log('App created, starting server...');
-    await app.listen(3000);
+    await app.listen(3000, '0.0.0.0');
     console.log('Server is running on http://localhost:3000');
   } catch (error) {
     console.error('Failed to start:', error);
