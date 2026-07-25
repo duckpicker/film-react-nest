@@ -20,7 +20,7 @@ export class OrderService {
         throw new BadRequestException('Фильм не найден');
       }
 
-      const scheduleItem = film.schedule.find((s) => s.id === ticket.session);
+      const scheduleItem = film.schedules.find((s) => s.id === ticket.session);
       if (!scheduleItem) {
         throw new BadRequestException('Сеанс не найден');
       }

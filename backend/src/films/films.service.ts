@@ -32,7 +32,7 @@ export class FilmsService {
       throw new NotFoundException('Фильм не найден');
     }
 
-    const schedule = film.schedule.map((item) => ({
+    const schedules = film.schedules.map((item) => ({
       id: item.id,
       film: id,
       daytime: item.daytime,
@@ -42,12 +42,12 @@ export class FilmsService {
       rows: item.rows,
       seats: item.seats,
       price: item.price,
-      taken: item.taken || [],
+      taken: item.taken ? item.taken.split(',').filter(Boolean) : [],
     }));
 
     return {
-      items: schedule,
-      total: schedule.length,
+      items: schedules,
+      total: schedules.length,
     };
   }
 
