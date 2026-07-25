@@ -36,5 +36,7 @@ jobs:
         run: set -eu && git clone --depth 1 $REP_TESTS $DIR_TESTS
       - name: Start project
         run: bash $DIR_TESTS/bin/start_project.sh
+      - name: Fix localhost resolution
+        run: echo "127.0.0.1 localhost" | sudo tee -a /etc/hosts
       - name: Run tests
         run: bash $DIR_TESTS/bin/endpoints.sh
