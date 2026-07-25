@@ -8,10 +8,10 @@ export const configProvider = {
       driver: configService.get<string>('DATABASE_DRIVER', 'postgres'),
       url: configService.get<string>(
         'DATABASE_URL',
-        'postgres://prac:prac@localhost:5432/prac',
+        'postgres://postgres:postgres@localhost:5432/films',
       ),
-      username: configService.get<string>('DATABASE_USERNAME', 'prac'),
-      password: configService.get<string>('DATABASE_PASSWORD', 'prac'),
+      username: configService.get<string>('DATABASE_USERNAME', 'postgres'),
+      password: configService.get<string>('DATABASE_PASSWORD', 'postgres'),
     },
   }),
   inject: [ConfigService],
