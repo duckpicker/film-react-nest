@@ -31,6 +31,10 @@ MongoDB должна быть установлена и запущена.
 
 Для проверки отправьте тестовый запрос с помощью Postman или `curl`.
 
+## Деплой
 
+- **Фронтенд:** [http://film.udarilisvtantcy.com](http://film.udarilisvtantcy.com)
+- **API:** [http://film.udarilisvtantcy.com/api/afisha/films/](http://film.udarilisvtantcy.com/api/afisha/films/)
+- **pgAdmin:** [http://film.udarilisvtantcy.com:8080](http://film.udarilisvtantcy.com:8080) (admin@admin.com / admin)
 
 
