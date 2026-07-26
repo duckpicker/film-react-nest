@@ -3,7 +3,6 @@ version: '3.8'
 services:
   postgres:
     image: postgres:16
-    container_name: postgres_container
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -12,15 +11,10 @@ services:
       - pg-data:/var/lib/postgresql/data
     networks:
       - app-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+    restart: always
 
   pgadmin:
     image: dpage/pgadmin4:8
-    container_name: pgadmin_container
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
@@ -30,15 +24,10 @@ services:
       - pgadmin-data:/var/lib/pgadmin
     networks:
       - app-network
-    depends_on:
-      - postgres
+    restart: always
 
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile.backend
     image: ghcr.io/duckpicker/film-react-nest/backend:latest
-    container_name: backend_container
     environment:
       DATABASE_DRIVER: postgres
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/films
@@ -47,39 +36,19 @@ services:
       LOG_TYPE: json
     networks:
       - app-network
-    depends_on:
-      postgres:
-        condition: service_healthy
-
-  frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile.frontend
-    image: ghcr.io/duckpicker/film-react-nest/frontend:latest
-    volumes:
-      - frontend-dist:/dist
+    restart: always
 
   nginx:
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile.nginx
     image: ghcr.io/duckpicker/film-react-nest/nginx:latest
-    container_name: nginx_container
     ports:
       - "80:80"
-    volumes:
-      - frontend-dist:/usr/share/nginx/html
     networks:
       - app-network
-    depends_on:
-      - backend
-      - frontend
+    restart: always
 
 volumes:
   pg-data:
   pgadmin-data:
-  frontend-dist:
 
 networks:
   app-network:
-    driver: bridge

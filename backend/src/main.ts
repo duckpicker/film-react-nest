@@ -1,23 +1,42 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, LoggerService } from '@nestjs/common';
+import { DevLogger } from './logger/dev.logger';
+import { JsonLogger } from './logger/json.logger';
+import { TskvLogger } from './logger/tskv.logger';
+
+function createLogger(): LoggerService {
+  const logType = process.env.LOG_TYPE || 'dev';
+
+  switch (logType) {
+    case 'json':
+      return new JsonLogger();
+    case 'tskv':
+      return new TskvLogger();
+    default:
+      return new DevLogger();
+  }
+}
 
 async function bootstrap() {
+  const logger = createLogger();
+
   try {
-    console.log('Starting application...');
+    logger.log('Starting application...');
     const app = await NestFactory.create(AppModule, {
-      logger: ['error', 'warn', 'log', 'debug', 'verbose'],
+      bufferLogs: true,
     });
     app.setGlobalPrefix('api/afisha');
     app.enableCors();
     app.useGlobalPipes(
       new ValidationPipe({ whitelist: true, transform: true }),
     );
-    console.log('App created, starting server...');
+    app.useLogger(logger);
+    logger.log('App created, starting server...');
     await app.listen(3000, '0.0.0.0');
-    console.log('Server is running on http://localhost:3000');
+    logger.log('Server is running on http://localhost:3000');
   } catch (error) {
-    console.error('Failed to start:', error);
+    logger.error('Failed to start:', error);
     throw error;
   }
 }
