@@ -22,12 +22,9 @@ jobs:
           - name: backend
             context: ./backend
             dockerfile: ./backend/Dockerfile.backend
-          - name: frontend
-            context: ./frontend
-            dockerfile: ./frontend/Dockerfile.frontend
           - name: nginx
-            context: ./nginx
-            dockerfile: ./nginx/Dockerfile.nginx
+            context: .
+            dockerfile: ./Dockerfile.nginx
 
     steps:
       - name: Checkout

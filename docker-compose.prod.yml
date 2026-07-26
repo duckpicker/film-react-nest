@@ -3,6 +3,7 @@ version: '3.8'
 services:
   postgres:
     image: postgres:16
+    container_name: postgres_container
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -15,6 +16,7 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4:8
+    container_name: pgadmin_container
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
@@ -28,6 +30,7 @@ services:
 
   backend:
     image: ghcr.io/duckpicker/film-react-nest/backend:latest
+    container_name: backend_container
     environment:
       DATABASE_DRIVER: postgres
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/films
@@ -40,6 +43,7 @@ services:
 
   nginx:
     image: ghcr.io/duckpicker/film-react-nest/nginx:latest
+    container_name: nginx_container
     ports:
       - "80:80"
     networks:
@@ -52,3 +56,4 @@ volumes:
 
 networks:
   app-network:
+    driver: bridge
