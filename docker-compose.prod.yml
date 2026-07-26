@@ -11,7 +11,8 @@ services:
     volumes:
       - pg-data:/var/lib/postgresql/data
     networks:
-      - app-network
+      app-network:
+        ipv4_address: 172.18.0.10
     restart: always
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
@@ -36,6 +37,8 @@ services:
   backend:
     image: ghcr.io/duckpicker/film-react-nest/backend:latest
     container_name: backend_container
+    extra_hosts:
+      - "postgres:172.18.0.10"
     environment:
       DATABASE_DRIVER: postgres
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/films
@@ -65,3 +68,6 @@ volumes:
 networks:
   app-network:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
