@@ -23,8 +23,8 @@ jobs:
             context: ./backend
             dockerfile: ./backend/Dockerfile.backend
           - name: frontend
-            context: .
-            dockerfile: ./Dockerfile.frontend
+            context: ./frontend
+            dockerfile: ./frontend/Dockerfile.frontend
           - name: nginx
             context: ./nginx
             dockerfile: ./nginx/Dockerfile.nginx
