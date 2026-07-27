@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { FilmsRepository } from '../repository/films.repository';
 import { FilmDto } from './dto/films.dto';
+import { Film } from './film.entity';
 
 @Injectable()
 export class FilmsService {
@@ -51,9 +52,28 @@ export class FilmsService {
     };
   }
 
-  private mapToDto(film: any): FilmDto {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { _id, __v, ...filmData } = film.toObject ? film.toObject() : film;
-    return filmData as FilmDto;
+  private mapToDto(film: Film): FilmDto {
+    let tags: string[];
+    if (typeof film.tags === 'string') {
+      try {
+        tags = JSON.parse(film.tags);
+      } catch {
+        tags = [film.tags];
+      }
+    } else {
+      tags = film.tags;
+    }
+
+    return {
+      id: film.id,
+      rating: film.rating,
+      director: film.director,
+      tags,
+      image: film.image,
+      cover: film.cover,
+      title: film.title,
+      about: film.about,
+      description: film.description,
+    };
   }
 }

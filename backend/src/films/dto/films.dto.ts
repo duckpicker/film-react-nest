@@ -1,13 +1,3 @@
-export class ScheduleItemDto {
-  id: string;
-  daytime: string;
-  hall: number;
-  rows: number;
-  seats: number;
-  price: number;
-  taken: string[];
-}
-
 export class FilmDto {
   id: string;
   rating: number;
@@ -18,5 +8,4 @@ export class FilmDto {
   title: string;
   about: string;
   description: string;
-  schedule: ScheduleItemDto[];
 }
