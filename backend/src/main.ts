@@ -33,7 +33,8 @@ async function bootstrap() {
     );
     app.useLogger(logger);
     logger.log('App created, starting server...');
-    await app.listen(3000, '0.0.0.0');
+    const port = process.env.PORT || 3000;
+    await app.listen(port, '0.0.0.0');
     logger.log('Server is running on http://localhost:3000');
   } catch (error) {
     logger.error('Failed to start:', error);

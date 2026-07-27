@@ -17,6 +17,7 @@ import { Schedule } from './films/schedule.entity';
       cache: true,
     }),
     TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
         host: configService.get('DATABASE_HOST', 'localhost'),

@@ -5,8 +5,8 @@ import { BaseLogger } from './base.logger';
 export class TskvLogger extends BaseLogger {
   protected formatMessage(
     level: string,
-    message: any,
-    ...optionalParams: any[]
+    message: string,
+    ...optionalParams: string[]
   ): string {
     const params = optionalParams
       .filter((p) => typeof p === 'string' || typeof p === 'number')

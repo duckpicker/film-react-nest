@@ -5,8 +5,6 @@ import { OrderDto } from './dto/order.dto';
 
 describe('OrderController', () => {
   let controller: OrderController;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let service: OrderService;
 
   const mockOrderService = {
     createOrder: jest.fn(),
@@ -24,7 +22,6 @@ describe('OrderController', () => {
     }).compile();
 
     controller = module.get<OrderController>(OrderController);
-    service = module.get<OrderService>(OrderService);
   });
 
   afterEach(() => {

@@ -3,27 +3,27 @@ import { LoggerService } from '@nestjs/common';
 export abstract class BaseLogger implements LoggerService {
   protected abstract formatMessage(
     level: string,
-    message: any,
-    ...optionalParams: any[]
+    message: string,
+    ...optionalParams: string[]
   ): string;
 
-  log(message: any, ...optionalParams: any[]) {
+  log(message: string, ...optionalParams: string[]) {
     console.log(this.formatMessage('log', message, ...optionalParams));
   }
 
-  error(message: any, ...optionalParams: any[]) {
+  error(message: string, ...optionalParams: string[]) {
     console.error(this.formatMessage('error', message, ...optionalParams));
   }
 
-  warn(message: any, ...optionalParams: any[]) {
+  warn(message: string, ...optionalParams: string[]) {
     console.warn(this.formatMessage('warn', message, ...optionalParams));
   }
 
-  debug(message: any, ...optionalParams: any[]) {
+  debug(message: string, ...optionalParams: string[]) {
     console.debug(this.formatMessage('debug', message, ...optionalParams));
   }
 
-  verbose(message: any, ...optionalParams: any[]) {
+  verbose(message: string, ...optionalParams: string[]) {
     console.log(this.formatMessage('verbose', message, ...optionalParams));
   }
 }

@@ -1,13 +1,9 @@
-version: '3.8'
-
 services:
-  postgres:
+  database:
     image: postgres:16
-    container_name: postgres_container
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: films
+    container_name: database_container
+    env_file:
+      - .env
     volumes:
       - pg-data:/var/lib/postgresql/data
     networks:
@@ -15,7 +11,7 @@ services:
         ipv4_address: 172.18.0.10
     restart: always
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -24,8 +20,8 @@ services:
     image: dpage/pgadmin4:8
     container_name: pgadmin_container
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@admin.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
     ports:
       - "8080:80"
     volumes:
@@ -33,30 +29,26 @@ services:
     networks:
       - app-network
     restart: always
+    depends_on:
+      - database
 
   backend:
     image: ghcr.io/duckpicker/film-react-nest/backend:latest
     container_name: backend_container
+    env_file:
+      - .env
     extra_hosts:
-      - "postgres:172.18.0.10"
-    environment:
-      DATABASE_HOST: postgres
-      DATABASE_PORT: 5432
-      DATABASE_USERNAME: postgres
-      DATABASE_PASSWORD: postgres
-      DATABASE_NAME: films
-      DATABASE_DRIVER: postgres
-      LOG_TYPE: json
+      - "database:172.18.0.10"
     networks:
       - app-network
     restart: always
     depends_on:
-      postgres:
+      database:
         condition: service_healthy
 
-  nginx:
-    image: ghcr.io/duckpicker/film-react-nest/nginx:latest
-    container_name: nginx_container
+  frontend:
+    image: ghcr.io/duckpicker/film-react-nest/frontend:latest
+    container_name: frontend_container
     ports:
       - "80:80"
       - "443:443"
@@ -65,10 +57,13 @@ services:
     networks:
       - app-network
     restart: always
+    depends_on:
+      - backend
 
 volumes:
   pg-data:
   pgadmin-data:
+  frontend-dist:
 
 networks:
   app-network:

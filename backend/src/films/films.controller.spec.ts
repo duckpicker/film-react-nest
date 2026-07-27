@@ -4,8 +4,6 @@ import { FilmsService } from './films.service';
 
 describe('FilmsController', () => {
   let controller: FilmsController;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let service: FilmsService;
 
   const mockFilmsService = {
     findAll: jest.fn(),
@@ -25,7 +23,6 @@ describe('FilmsController', () => {
     }).compile();
 
     controller = module.get<FilmsController>(FilmsController);
-    service = module.get<FilmsService>(FilmsService);
   });
 
   afterEach(() => {

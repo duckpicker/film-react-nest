@@ -6,12 +6,11 @@ export const configProvider = {
   useFactory: (configService: ConfigService) => ({
     database: {
       driver: configService.get<string>('DATABASE_DRIVER', 'postgres'),
-      url: configService.get<string>(
-        'DATABASE_URL',
-        'postgres://postgres:postgres@localhost:5432/films',
-      ),
+      host: configService.get<string>('DATABASE_HOST', 'localhost'),
+      port: configService.get<number>('DATABASE_PORT', 5432),
       username: configService.get<string>('DATABASE_USERNAME', 'postgres'),
       password: configService.get<string>('DATABASE_PASSWORD', 'postgres'),
+      name: configService.get<string>('DATABASE_NAME', 'films'),
     },
   }),
   inject: [ConfigService],

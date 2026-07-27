@@ -5,8 +5,8 @@ import { BaseLogger } from './base.logger';
 export class JsonLogger extends BaseLogger {
   protected formatMessage(
     level: string,
-    message: any,
-    ...optionalParams: any[]
+    message: string,
+    ...optionalParams: string[]
   ): string {
     return JSON.stringify({
       level,
